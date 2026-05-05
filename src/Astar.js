@@ -52,7 +52,7 @@ function hManhattan(x, y, dest) {
     return Math.abs(x - dest.x) + Math.abs(y - dest.y); // Manhattan distance
 }
 
-function hWeighted(x, y, dest, weight = 1.5) {
+function hWeighted(x, y, dest, weight = 3) {
     return weight * (Math.abs(x - dest.x) + Math.abs(y - dest.y)); // Weighted Manhattan distance
 }
 
