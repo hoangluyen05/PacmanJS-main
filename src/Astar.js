@@ -295,3 +295,4 @@ export default function nextStepAstar(xStart, yStart, xEnd, yEnd, grid) {
 
     return null;
 }
+// 12344
