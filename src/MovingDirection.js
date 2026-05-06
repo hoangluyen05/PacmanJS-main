@@ -1,4 +1,4 @@
-const MovingDirection = {
+const MovingDirection = { // Hướng di chuyển
     up: 0,
     down: 1,
     left: 2,

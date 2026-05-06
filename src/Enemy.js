@@ -108,17 +108,17 @@ export default class Enemy{
 
     // Set hướng di chuyển ngẫu nhiên
     #setDirectionRandom(){
-        this.directionTimer--;
-        let newMoveDirection = null;
-        if(this.directionTimer > 0){
-            this.directionTimer = this.directionTimerDefault;
-            newMoveDirection = Math.floor(Math.random() * Object.keys(MovingDirection).length);
+        this.directionTimer--; // Giảm thời gian đếm ngược
+        let newMoveDirection = null; // Hướng di chuyển mới
+        if(this.directionTimer > 0){ // Nếu thời gian đếm ngược còn
+            this.directionTimer = this.directionTimerDefault; // Reset thời gian đếm ngược
+            newMoveDirection = Math.floor(Math.random() * Object.keys(MovingDirection).length); // Chọn hướng di chuyển ngẫu nhiên
         }
 
-        if(newMoveDirection != null && this.movingDirection != newMoveDirection){
-            if(Number.isInteger(this.x/ this.tileSize) && Number.isInteger(this.y/ this.tileSize)){
-                if(!this.tileMap.didCollideWithEnviroment(this.x, this.y, newMoveDirection)){
-                    this.movingDirection = newMoveDirection;
+        if(newMoveDirection != null && this.movingDirection != newMoveDirection){ // Nếu hướng di chuyển mới khác hướng di chuyển hiện tại
+            if(Number.isInteger(this.x/ this.tileSize) && Number.isInteger(this.y/ this.tileSize)){ // Nếu vị trí của ghost là số nguyên
+                if(!this.tileMap.didCollideWithEnviroment(this.x, this.y, newMoveDirection)){ // Nếu không va chạm với môi trường
+                    this.movingDirection = newMoveDirection; // Set hướng di chuyển mới
                 }
             }
         }
@@ -128,16 +128,16 @@ export default class Enemy{
     #moveAstar(){
         switch(this.movingDirection){
             case MovingDirection.up:
-                this.y -= this.velocity;
+                this.y -= this.velocity; // Di chuyển lên
                 break;
             case MovingDirection.down:
-                this.y += this.velocity;
+                this.y += this.velocity; // Di chuyển xuống
                 break;
             case MovingDirection.left:
-                this.x -= this.velocity;
+                this.x -= this.velocity; // Di chuyển sang trái
                 break;
             case MovingDirection.right:
-                this.x += this.velocity;
+                this.x += this.velocity; // Di chuyển sang phải
                 break;
         }
         
@@ -145,19 +145,19 @@ export default class Enemy{
 
     // Di chuyển ngẫu nhiên
     #moveRandom(){
-        if(!this.tileMap.didCollideWithEnviroment(this.x, this.y, this.movingDirection)){
+        if(!this.tileMap.didCollideWithEnviroment(this.x, this.y, this.movingDirection)){ // Nếu không va chạm với môi trường
             switch(this.movingDirection){
                 case MovingDirection.up:
-                    this.y -= this.velocity;
+                    this.y -= this.velocity; // Di chuyển lên
                     break;
                 case MovingDirection.down:
-                    this.y += this.velocity;
+                    this.y += this.velocity; // Di chuyển xuống
                     break;
                 case MovingDirection.left:
-                    this.x -= this.velocity;
+                    this.x -= this.velocity; // Di chuyển sang trái
                     break;
                 case MovingDirection.right:
-                    this.x += this.velocity;
+                    this.x += this.velocity; // Di chuyển sang phải
                     break;
             }
         }
@@ -165,58 +165,17 @@ export default class Enemy{
     
     // Load hình ảnh
     #loadImages(){
-        this.normalGhost = new Image();
-        this.normalGhost.src = '../images/ghost.png';
+        this.normalGhost = new Image(); // Tạo hình ảnh ma bình thường
+        this.normalGhost.src = '../images/ghost.png'; 
 
-        this.scaredGhost = new Image();
+        this.scaredGhost = new Image(); // Tạo hình ảnh ma sợ hãi
         this.scaredGhost.src = '../images/scaredGhost.png';
 
-        this.scaredGhost2 = new Image();
+        this.scaredGhost2 = new Image(); // Tạo hình ảnh ma sợ hãi 2
         this.scaredGhost2.src = '../images/scaredGhost2.png';
 
         this.image = this.normalGhost;
     }
 
-    // // Phát hiện pacman
-    // #detectPacman(){
-    //     let indexX = Math.floor(this.x/this.tileSize); // Lấy vị trí x của ghost
-    //     let indexY = Math.floor(this.y/this.tileSize); // Lấy vị trí y của ghost
-    //     let pacmanIndexX = Math.floor(this.pacmanX/this.tileSize); // Lấy vị trí x của pacman
-    //     let pacmanIndexY = Math.floor(this.pacmanY/this.tileSize); // Lấy vị trí y của pacman
-    //     if( (indexX == pacmanIndexX && this.#noWallInColumnBetween(indexX, indexY,pacmanIndexY)) || (indexY == pacmanIndexY && this.#noWallInRowBetween(indexY, indexX, pacmanIndexX)) ){
-    //         // Nếu ghost và pacman cùng hàng hoặc cùng cột và không có tường giữa
-    //         this.chaseAstarTimer = this.chaseAstarTimerDefault; // Set thời gian chạy A*
-    //         return true;
-    //     }
-    //     if(this.chaseAstarTimer > 0){ // Nếu thời gian chạy A* còn lớn hơn 0
-    //         this.chaseAstarTimer--; // Giảm thời gian chạy A*
-    //         return true;
-    //     }
-    //     return false;
-    // }
-    
-    // // Kiểm tra cột có tường giữa ghost và pacman không
-    // #noWallInColumnBetween(collumnIndex, indexY, pacmanIndexY){
-
-    //     const [start, end] = indexY < pacmanIndexY ? [indexY, pacmanIndexY] : [pacmanIndexY, indexY];
-
-    //     for(let row = start + 1; row < end; row++){
-    //         if(this.tileMap.map[row][collumnIndex] == 1){
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // }
-
-    // // Kiểm tra hàng có tường giữa ghost và pacman không
-    // #noWallInRowBetween(rowIndex, indexX, pacmanIndexX){
-    //     const [start, end] = indexX < pacmanIndexX ? [indexX, pacmanIndexX] : [pacmanIndexX, indexX];
-    //     for(let collumn = start + 1; collumn < end; collumn++){
-    //         if(this.tileMap.map[rowIndex][collumn] == 1){
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // }
     
 }

@@ -17,10 +17,10 @@ export default class Pacman {
 
         this.pacmanRotation = this.Rotation.right; // hướng quay của pacman
 
-        this.wakaSound = new Audio('../sounds/waka.wav');
-        this.powerDotSound = new Audio('../sounds/power_dot.wav');
+        this.wakaSound = new Audio('../sounds/waka.wav'); // Âm thanh ăn viên
+        this.powerDotSound = new Audio('../sounds/power_dot.wav'); // Âm thanh ăn viên năng lượng
 
-        this.eatGhostSound = new Audio('../sounds/eat_ghost.wav');
+        this.eatGhostSound = new Audio('../sounds/eat_ghost.wav'); // Âm thanh ăn ma
 
         this.powerDotAboutToExpire = false; // biến kiểm tra power dot sắp hết hạn
         this.powerDotActive = false; // biến kiểm tra power dot còn hoạt động
@@ -58,12 +58,12 @@ export default class Pacman {
 
     // hàm xử lý sự kiện keydown
     #keyDown(event){
-        if(event.keyCode == 38){
-            if(this.currentMovingDirection == MovingDirection.down){
-                this.currentMovingDirection = MovingDirection.up;
+        if(event.keyCode == 38){ // Mũi tên lên
+            if(this.currentMovingDirection == MovingDirection.down){ // Nếu đang di chuyển xuống
+                this.currentMovingDirection = MovingDirection.up; // Chuyển hướng lên
             }
-            this.requestedMovingDirection = MovingDirection.up;
-            this.madeFirstMove = true;
+            this.requestedMovingDirection = MovingDirection.up; // Hướng di chuyển yêu cầu
+            this.madeFirstMove = true; // Đã di chuyển lần đầu
         }
 
         if(event.keyCode == 40){
