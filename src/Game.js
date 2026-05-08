@@ -1,37 +1,39 @@
-import TileMap from "./TileMap.js"; // Lấy cấu trúc bản đồ
+import TileMap from "./TileMap.js";
 import { 
     setHeuristic, 
     HeuristicType, 
     currentHeuristic,
-    lastStats
-} from "./Astar.js"; // Lấy các hàm và biến từ Astar.js 
+    lastStats,
+    totalStats,
+    resetTotalStats
+} from "./Astar.js";
 
-const tileSize = 32; // Kích thước ô
-const velocity = 2; // Tốc độ di chuyển
+const tileSize = 32;
+const velocity = 2;
 
-const canvas = document.getElementById("gameCanvas"); // Lấy canvas
-const ctx = canvas.getContext("2d"); // Lấy context 2D
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-let tileMap = new TileMap(tileSize); // Tạo bản đồ
-let pacman = tileMap.getPacman(velocity); // Lấy pacman
-let enemies = tileMap.getEnemies(velocity); // Lấy con ma
+let tileMap = new TileMap(tileSize);
+let pacman = tileMap.getPacman(velocity);
+let enemies = tileMap.getEnemies(velocity);
 
-let gameOver = false; // Trạng thái game over
-let gameWin = false; // Trạng thái game win
-let gamePause = false; // Trạng thái game pause
+let gameOver = false;
+let gameWin = false;
+let gamePause = false;
 
-const gameOverSound = new Audio("../sounds/gameOver.wav"); // Âm thanh game over
-const gameWinSound = new Audio("../sounds/gameWin.wav"); // Âm thanh game win
+const gameOverSound = new Audio("../sounds/gameOver.wav");
+const gameWinSound = new Audio("../sounds/gameWin.wav");
 
 // ================= UI HEURISTIC =================
-const btnManhattan = document.getElementById("btn-manhattan"); // Nút chuyển sang heuristic Manhattan
-const btnBFS = document.getElementById("btn-bfs"); // Nút chuyển sang heuristic BFS
-const btnWeighted = document.getElementById("btn-weighted"); // Nút chuyển sang heuristic Weighted
-const modeText = document.getElementById("mode"); // Text hiển thị mode hiện tại
-const statsText = document.getElementById("stats"); // Text hiển thị thống kê
+const btnManhattan = document.getElementById("btn-manhattan");
+const btnBFS = document.getElementById("btn-bfs");
+const btnWeighted = document.getElementById("btn-weighted");
+const modeText = document.getElementById("mode");
+const statsText = document.getElementById("stats");
 
 // 👉 chuyển heuristic + reset
-if (btnManhattan) { // Nút chuyển sang heuristic Manhattan
+if (btnManhattan) {
     btnManhattan.onclick = () => {
         setHeuristic(HeuristicType.MANHATTAN);
         resetGame();
@@ -60,7 +62,7 @@ function updateModeUI() {
     if (!modeText) return;
 
     const text =
-        currentHeuristic === HeuristicType.MANHATTAN        ? "MANHATTAN" : 
+        currentHeuristic === HeuristicType.MANHATTAN        ? "MANHATTAN" :
         currentHeuristic === HeuristicType.WEIGHTED_MANHATTAN ? "WEIGHTED MANHATTAN" :
         "BFS";
 
@@ -72,23 +74,23 @@ function updateStatsUI() {
     if (!statsText) return;
 
     statsText.innerText =
-        `Nodes: ${lastStats.nodesVisited} | ` +
-        `Path: ${lastStats.pathLength} | ` +
-        `Time: ${lastStats.time} ms`;
+        `Nodes: ${totalStats.nodesVisited} | ` +
+        `Path: ${totalStats.pathLength} | ` +
+        `Time: ${totalStats.time.toFixed(3)} ms`;
 }
 
 // ================= GAME LOOP =================
-function gameLoop() { // Vòng lặp game
-    tileMap.draw(ctx); // Vẽ bản đồ
-    drawGameEnd(); // Vẽ kết thúc game
+function gameLoop() {
+    tileMap.draw(ctx);
+    drawGameEnd();
 
-    pacman.draw(ctx, pause(), enemies); // Vẽ pacman
+    pacman.draw(ctx, pause(), enemies);
 
     enemies.forEach((enemy) => {
-        enemy.draw(ctx, pause(), pacman); // Vẽ kẻ địch
+        enemy.draw(ctx, pause(), pacman);
     });
 
-    checkGameOver(); // Kiểm tra game over
+    checkGameOver();
     checkGameWin();
 
     // 🔥 cập nhật stats realtime
@@ -96,14 +98,14 @@ function gameLoop() { // Vòng lặp game
 }
 
 // ================= CLICK RESET =================
-canvas.addEventListener("click", () => { // Xử lý sự kiện click trên canvas
+canvas.addEventListener("click", () => {
     if (gameOver || gameWin) {
         resetGame();
     }
 });
 
 // ================= PAUSE BUTTON =================
-const buttonPauseGame = document.getElementById("pause-game"); // Nút tạm dừng game
+const buttonPauseGame = document.getElementById("pause-game");
 
 buttonPauseGame.addEventListener("click", () => {
     if (gamePause) {
@@ -116,41 +118,44 @@ buttonPauseGame.addEventListener("click", () => {
 });
 
 // ================= DRAW END =================
-function drawGameEnd() { // Vẽ kết thúc game
+function drawGameEnd() {
     if (gameOver || gameWin) {
         let text = "You Win!";
         if (gameOver) text = "Game Over!";
 
-        ctx.fillStyle = "black"; // Màu nền
-        ctx.fillRect(0, canvas.height / 3.2, canvas.width, 80); // Hình chữ nhật nền
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, canvas.height / 3.2, canvas.width, 80);
 
-        ctx.font = "80px comic sans"; // Font chữ
+        ctx.font = "80px comic sans";
 
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0); // Tạo gradient
-        gradient.addColorStop("0", "magenta"); // Màu bắt đầu
-        gradient.addColorStop("0.5", "blue"); // Màu giữa
-        gradient.addColorStop("1.0", "red"); // Màu kết thúc
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop("0", "magenta");
+        gradient.addColorStop("0.5", "blue");
+        gradient.addColorStop("1.0", "red");
 
-        ctx.fillStyle = gradient; // Áp dụng gradient
-        ctx.fillText(text, 10, canvas.height / 2); // Vẽ chữ
+        ctx.fillStyle = gradient;
+        ctx.fillText(text, 10, canvas.height / 2);
     }
 }
 
 // ================= RESET =================
-function resetGame() { // Đặt lại game
-    tileMap = new TileMap(tileSize); // Tạo lại bản đồ
-    pacman = tileMap.getPacman(velocity); // Tạo lại pacman
-    enemies = tileMap.getEnemies(velocity); // Tạo lại kẻ địch
+function resetGame() {
+     // reset thống kê tổng
+    resetTotalStats();
+    
+    tileMap = new TileMap(tileSize);
+    pacman = tileMap.getPacman(velocity);
+    enemies = tileMap.getEnemies(velocity);
 
     gameOver = false;
     gameWin = false;
 }
 
 // ================= GAME STATE =================
-function checkGameWin() { // Kiểm tra game win
+function checkGameWin() {
     if (!gameWin) {
-        gameWin = tileMap.didGameWin(); // Kiểm tra điều kiện thắng
-        if (gameWin) gameWinSound.play(); // Phát âm thanh thắng
+        gameWin = tileMap.didGameWin();
+        if (gameWin) gameWinSound.play();
     }
 }
 
@@ -161,18 +166,18 @@ function checkGameOver() {
     }
 }
 
-function isGameOver() { // Kiểm tra game over
-    return enemies.some((enemy) => { // Kiểm tra từng kẻ địch
-        return !pacman.powerDotActive && enemy.collideWith(pacman); // Kiểm tra va chạm
+function isGameOver() {
+    return enemies.some((enemy) => {
+        return !pacman.powerDotActive && enemy.collideWith(pacman);
     });
 }
 
 function pause() {
-    return !pacman.madeFirstMove || gameOver || gameWin || gamePause; // Kiểm tra tạm dừng
+    return !pacman.madeFirstMove || gameOver || gameWin || gamePause;
 }
 
 // ================= INIT =================
-tileMap.setCanvasSize(canvas); // Đặt kích thước canvas cho bản đồ
+tileMap.setCanvasSize(canvas);
 
 // 👉 hiển thị ban đầu
 updateModeUI();
