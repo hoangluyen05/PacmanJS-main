@@ -1,12 +1,17 @@
 import MovingDirection from "./MovingDirection.js";
 
 // ================== HEURISTIC CONFIG ==================
+<<<<<<< HEAD
 export const HeuristicType = { // Các loại heuristic
+=======
+export const HeuristicType = {
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
     MANHATTAN: 0,
     BFS: 1,
     WEIGHTED_MANHATTAN: 2
 };
 
+<<<<<<< HEAD
 export let currentHeuristic = HeuristicType.MANHATTAN; // Mặc định là Manhattan
 
 export function setHeuristic(type) {
@@ -15,12 +20,26 @@ export function setHeuristic(type) {
 
 // ================== STATS ==================
 export let lastStats = { // Thống kê của lần chạy trước
+=======
+export let currentHeuristic = HeuristicType.MANHATTAN;
+
+export function setHeuristic(type) {
+    currentHeuristic = type;
+}
+
+// ================== STATS ==================
+export let lastStats = {
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
     nodesVisited: 0,
     pathLength: 0,
     time: 0
 };
 
+<<<<<<< HEAD
 export let totalStats = { // Thống kê tổng
+=======
+export let totalStats = {
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
     nodesVisited: 0,
     pathLength: 0,
     time: 0
@@ -51,12 +70,21 @@ class Node {
 
 // ================== CHECK ==================
 function isValid(x, y, grid) {
+<<<<<<< HEAD
     return x >= 0 && x < grid.length && // Kiểm tra giới hạn hàng
         y >= 0 && y < grid[0].length && // Kiểm tra giới hạn cột
         grid[x][y] !== 1; // Kiểm tra ô không phải là tường
 }
 
 function isDestination(x, y, dest) { // Kiểm tra xem có phải là đích không
+=======
+    return x >= 0 && x < grid.length &&
+        y >= 0 && y < grid[0].length &&
+        grid[x][y] !== 1;
+}
+
+function isDestination(x, y, dest) {
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
     return x === dest.x && y === dest.y;
 }
 
@@ -74,7 +102,11 @@ function hBFS(x, y, distanceMap) {
 }
 
 // ================== MIN HEAP ==================
+<<<<<<< HEAD
 class MinHeap {  
+=======
+class MinHeap {
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
     constructor() {
         this.heap = [];
         this.positionMap = new Map(); // key: "x,y" -> index in heap
@@ -92,22 +124,36 @@ class MinHeap {
 
     // Tie-breaking: ưu tiên node có g cao hơn (gần đích hơn) khi f bằng nhau
     isBetter(childIdx, parentIdx) {
+<<<<<<< HEAD
         const child = this.heap[childIdx]; // Node con
         const parent = this.heap[parentIdx]; // Node cha
+=======
+        const child = this.heap[childIdx];
+        const parent = this.heap[parentIdx];
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
         if (child.f !== parent.f) return child.f < parent.f;
         return child.g > parent.g; // tie-break: prefer larger g
     }
 
-    bubbleUp(index) { // Đẩy phần tử lên
+    bubbleUp(index) {
         while (index > 0) {
+<<<<<<< HEAD
             const parent = Math.floor((index - 1) / 2); // Tính chỉ số cha
             if (!this.isBetter(index, parent)) break; // Nếu không tốt hơn thì dừng
+=======
+            const parent = Math.floor((index - 1) / 2);
+            if (!this.isBetter(index, parent)) break;
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
             this.swap(parent, index);
             index = parent;
         }
     }
 
+<<<<<<< HEAD
     bubbleDown(index) { // Đẩy phần tử xuống
+=======
+    bubbleDown(index) {
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
         const length = this.heap.length;
         while (true) {
             let best = index;
@@ -123,6 +169,7 @@ class MinHeap {
         }
     }
 
+<<<<<<< HEAD
     insert(node) { // Chèn node vào heap
         this.heap.push(node);
         const index = this.heap.length - 1;
@@ -140,6 +187,25 @@ class MinHeap {
         if (this.heap.length > 0) {
             this.heap[0] = last; // Đưa phần tử cuối cùng lên vị trí gốc
             this.positionMap.set(this.getKey(last), 0); // Cập nhật vị trí của node sau khi đưa lên
+=======
+    insert(node) {
+        this.heap.push(node);
+        const index = this.heap.length - 1;
+        this.positionMap.set(this.getKey(node), index);
+        this.bubbleUp(index);
+    }
+
+    extractMin() {
+        if (this.heap.length === 0) return null;
+
+        const root = this.heap[0];
+        const last = this.heap.pop();
+        this.positionMap.delete(this.getKey(root));
+
+        if (this.heap.length > 0) {
+            this.heap[0] = last;
+            this.positionMap.set(this.getKey(last), 0);
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
             this.bubbleDown(0);
         }
 
@@ -151,12 +217,21 @@ class MinHeap {
     }
 
     contains(x, y) {
+<<<<<<< HEAD
         return this.positionMap.has(`${x},${y}`); // Kiểm tra xem heap có chứa node này không
     }
 
     getNode(x, y) {
         const idx = this.positionMap.get(`${x},${y}`); // Lấy chỉ số của node trong heap
         return idx !== undefined ? this.heap[idx] : null; // Trả về node nếu tồn tại, ngược lại trả về null
+=======
+        return this.positionMap.has(`${x},${y}`);
+    }
+
+    getNode(x, y) {
+        const idx = this.positionMap.get(`${x},${y}`);
+        return idx !== undefined ? this.heap[idx] : null;
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
     }
 
     // Update node nếu đã tồn tại, insert nếu chưa có
@@ -225,13 +300,21 @@ function astarSearch(grid, src, dest, distanceMap) {
         src.h = hBFS(src.x, src.y, distanceMap);
     }
     src.calculateF();
+<<<<<<< HEAD
     openList.insert(src); // Chèn node bắt đầu vào openList
+=======
+    openList.insert(src);
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
 
     const directions = [
         [-1, 0], [1, 0], [0, -1], [0, 1]
     ];
 
+<<<<<<< HEAD
     while (!openList.isEmpty()) { 
+=======
+    while (!openList.isEmpty()) {
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
         const currentNode = openList.extractMin();
         const key = `${currentNode.x},${currentNode.y}`;
 
@@ -247,7 +330,11 @@ function astarSearch(grid, src, dest, distanceMap) {
                 cur = cur.parent;
             }
 
+<<<<<<< HEAD
             const elapsedTime = Number((performance.now() - startTime).toFixed(3)); // Tính thời gian đã trôi qua
+=======
+            const elapsedTime = Number((performance.now() - startTime).toFixed(3));
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
 
             lastStats.nodesVisited = nodesVisited;
             lastStats.pathLength = Math.max(0, path.length-1);
@@ -268,7 +355,11 @@ function astarSearch(grid, src, dest, distanceMap) {
 
             if (!isValid(newX, newY, grid) || closedSet.has(neighborKey)) continue;
 
+<<<<<<< HEAD
             const newNode = new Node(newX, newY, currentNode); 
+=======
+            const newNode = new Node(newX, newY, currentNode);
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
             newNode.g = currentNode.g + 1;
 
             if (currentHeuristic === HeuristicType.MANHATTAN) {
@@ -281,9 +372,15 @@ function astarSearch(grid, src, dest, distanceMap) {
 
             newNode.calculateF();
 
+<<<<<<< HEAD
             const existing = openList.getNode(newX, newY); // Lấy node nếu đã tồn tại trong openList
             if (!existing || newNode.g < existing.g) { // Nếu không tồn tại hoặc cost mới thấp hơn cost cũ
                 openList.update(newNode); // Cập nhật node trong openList
+=======
+            const existing = openList.getNode(newX, newY);
+            if (!existing || newNode.g < existing.g) {
+                openList.update(newNode);
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
             }
         }
     }
@@ -304,8 +401,9 @@ function astarSearch(grid, src, dest, distanceMap) {
 
 
 // ================== MAIN ==================
-export default function nextStepAstar(xStart, yStart, xEnd, yEnd, grid) { // Hàm chính để tìm đường đi
+export default function nextStepAstar(xStart, yStart, xEnd, yEnd, grid) {
 
+<<<<<<< HEAD
     const src = new Node(xStart, yStart); 
     const dest = new Node(xEnd, yEnd);
 
@@ -320,6 +418,22 @@ export default function nextStepAstar(xStart, yStart, xEnd, yEnd, grid) { // Hà
     if (!path || path.length < 2) return null; // Không tìm thấy đường đi hợp lệ
 
     const tile = path[1]; // Lấy ô tiếp theo trong đường đi
+=======
+    const src = new Node(xStart, yStart);
+    const dest = new Node(xEnd, yEnd);
+
+    let distanceMap = null;
+
+    if (currentHeuristic === HeuristicType.BFS) {
+        distanceMap = buildDistanceMap(grid, xEnd, yEnd);
+    }
+
+    const path = astarSearch(grid, src, dest, distanceMap);
+
+    if (!path || path.length < 2) return null;
+
+    const tile = path[1];
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
 
     if (tile.x - xStart === 1) return MovingDirection.down; // Di chuyển xuống
     if (tile.x - xStart === -1) return MovingDirection.up; // Di chuyển lên
@@ -327,4 +441,8 @@ export default function nextStepAstar(xStart, yStart, xEnd, yEnd, grid) { // Hà
     if (tile.y - yStart === -1) return MovingDirection.left; // Di chuyển sang trái
 
     return null;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 70d3edf65c46bd9b2172624963c813e035c8a09e
