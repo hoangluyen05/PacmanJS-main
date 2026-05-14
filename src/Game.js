@@ -17,6 +17,9 @@ const ctx = canvas.getContext("2d");
 let tileMap = new TileMap(tileSize);
 let pacman = tileMap.getPacman(velocity);
 let enemies = tileMap.getEnemies(velocity);
+// Thêm 1 enemy dùng heuristic Manhattan
+const extraEnemy = tileMap.addExtraManhattanEnemy(velocity);
+if(extraEnemy) enemies.push(extraEnemy);
 
 let gameOver = false;
 let gameWin = false;
@@ -32,7 +35,7 @@ const btnWeighted = document.getElementById("btn-weighted");
 const modeText = document.getElementById("mode");
 const statsText = document.getElementById("stats");
 
-// 👉 chuyển heuristic + reset
+// chuyển heuristic + reset
 if (btnManhattan) {
     btnManhattan.onclick = () => {
         setHeuristic(HeuristicType.MANHATTAN);
@@ -57,7 +60,7 @@ if (btnWeighted) {
     };
 }
 
-// 👉 hiển thị mode
+// hiển thị mode
 function updateModeUI() {
     if (!modeText) return;
 
@@ -69,7 +72,7 @@ function updateModeUI() {
     modeText.innerText = "Mode: " + text;
 }
 
-// 👉 hiển thị thống kê
+// hiển thị thống kê
 function updateStatsUI() {
     if (!statsText) return;
 
@@ -123,10 +126,17 @@ function drawGameEnd() {
         let text = "You Win!";
         if (gameOver) text = "Game Over!";
 
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, canvas.height / 3.2, canvas.width, 80);
+        //Xác định vị trí dải băng đen
+        const rectHeight = 100;
+        const rectY = canvas.height / 3.2; 
 
-        ctx.font = "80px comic sans";
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, rectY, canvas.width, rectHeight);
+
+        //Cấu hình chữ
+        ctx.font = "70px 'Comic Sans MS', cursive";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
 
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
         gradient.addColorStop("0", "magenta");
@@ -134,7 +144,11 @@ function drawGameEnd() {
         gradient.addColorStop("1.0", "red");
 
         ctx.fillStyle = gradient;
-        ctx.fillText(text, 10, canvas.height / 2);
+
+        // Vẽ chữ vào chính giữa dải băng đen
+        // X = canvas.width / 2 (giữa chiều ngang)
+        // Y = rectY + (rectHeight / 2) (giữa chiều dọc của dải băng)
+        ctx.fillText(text, canvas.width / 2, rectY + rectHeight / 2);
     }
 }
 
@@ -146,6 +160,8 @@ function resetGame() {
     tileMap = new TileMap(tileSize);
     pacman = tileMap.getPacman(velocity);
     enemies = tileMap.getEnemies(velocity);
+    const extra = tileMap.addExtraManhattanEnemy(velocity);
+    if(extra) enemies.push(extra);
 
     gameOver = false;
     gameWin = false;
@@ -179,7 +195,7 @@ function pause() {
 // ================= INIT =================
 tileMap.setCanvasSize(canvas);
 
-// 👉 hiển thị ban đầu
+// hiển thị ban đầu
 updateModeUI();
 updateStatsUI();
 

@@ -3,12 +3,16 @@ import nextStepAstar from "./Astar.js";
 // Lớp Kẻ địch
 export default class Enemy{
 
-    constructor(x, y, tileSize, velocity, tileMap){
+
+    // thêm thuộc tính
+    constructor(x, y, tileSize, velocity, tileMap, heuristic = null){
         this.x = x; // Vị trí x
         this.y = y; // Vị trí y
         this.tileSize = tileSize; // Kích thước của mỗi ô trong game
         this.velocity = velocity; // Tốc độ di chuyển
         this.tileMap = tileMap; // TileMap
+
+        this.heuristic = heuristic; 
 
         this.#loadImages(); // Load hình ảnh
 
@@ -43,10 +47,6 @@ export default class Enemy{
 
     // Kiểm tra va chạm với pacman
     collideWith(pacman){
-        /* 
-            Điều kiện va chạm giữa pacman và ghost tham khảo ở đường link sau
-            https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-        */
         const size = this.tileSize / 2;
         if(
             this.x < pacman.x + size && 
@@ -101,7 +101,7 @@ export default class Enemy{
         if(Number.isInteger(this.x/ this.tileSize) && Number.isInteger(this.y/ this.tileSize)){ // Nếu vị trí của ghost là số nguyên
             let pacmanIdX = Math.floor(this.pacmanX/this.tileSize); // Lấy vị trí x của pacman
             let pacmanIdY = Math.floor(this.pacmanY/this.tileSize); // Lấy vị trí y của pacman
-            this.movingDirection = nextStepAstar(this.y/ this.tileSize, this.x/ this.tileSize, pacmanIdY, pacmanIdX, this.tileMap.map); // Set hướng di chuyển theo A*
+            this.movingDirection = nextStepAstar(this.y/ this.tileSize, this.x/ this.tileSize, pacmanIdY, pacmanIdX, this.tileMap.map, this.heuristic); // Set hướng di chuyển theo A*
         }
         
     }
@@ -179,3 +179,4 @@ export default class Enemy{
 
     
 }
+
